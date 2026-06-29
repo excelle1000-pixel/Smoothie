@@ -3,10 +3,10 @@ package ww.smoothiemod.client.mixins;
 
 // Imports
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.PositionInterpolator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InterpolationHandler;
+import net.minecraft.world.entity.player.Player;
+import org.joml.Vector3d;
 import ww.smoothiemod.client.Smoothie;
 
 // Spongie
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
-@Mixin(PositionInterpolator.class)
+@Mixin(InterpolationHandler.class)
 public abstract class PositionInterpolatorMixin {
 
     @Shadow @Final
@@ -32,10 +32,10 @@ public abstract class PositionInterpolatorMixin {
     @Unique private double smoothlerp$avgIntervalMs = 100.0;
     @Unique private boolean smoothlerp$hasSample = false;
 
-    @Inject(method = "refreshPositionAndAngles", at = @At("HEAD"))
-    private void smoothlerp$onRefresh(Vec3d position, float yaw, float pitch, CallbackInfo ci) {
+    @Inject(method = "interpolateTo", at = @At("HEAD"))
+    private void smoothlerp$onRefresh(Vector3d position, float yaw, float pitch /*, CallbackInfo ci */) {
         if (!Smoothie.ENABLED) return;
-        if (!(this.entity instanceof PlayerEntity)) return;
+        if (!(this.entity instanceof Player)) return;
 
         long now = System.nanoTime();
         if (smoothlerp$lastUpdateNanos != 0L) {
@@ -55,7 +55,7 @@ public abstract class PositionInterpolatorMixin {
         double ticks = smoothlerp$avgIntervalMs / 50.0;
         int target = (int) Math.ceil(ticks) + Smoothie.JITTER_BUFFER_TICKS;
         int steps = Math.clamp(
-                Math.max(target, PositionInterpolator.DEFAULT_INTERPOLATION_DURATION),
+                Math.max(target, InterpolationHandler.DEFAULT_INTERPOLATION_STEPS),
                 1,
                 Smoothie.MAX_STEPS
         );
