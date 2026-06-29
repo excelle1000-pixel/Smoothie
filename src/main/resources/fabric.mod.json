@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "smoothiemod",
+  "version": "${version}",
+  "name": "SmoothieMod",
+  "description": "Smoothie",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/smoothiemod/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ww.smoothiemod.client.Smoothie"
+    ]
+  },
+  "mixins": [
+    "smoothiemod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
